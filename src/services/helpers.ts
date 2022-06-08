@@ -21,7 +21,15 @@ export const getAll = <T>({ model, setData }: { model: string; setData: (data: T
   return unsubscribe
 }
 
-export const createDoc = async ({ model, id, data }: { model: string; id?: string; data: any }) => {
+export const createDoc = async <T>({
+  model,
+  id,
+  data,
+}: {
+  model: string
+  id?: string
+  data: T
+}) => {
   try {
     if (id) {
       await setDoc(doc(db, model, id), data)
@@ -36,6 +44,20 @@ export const createDoc = async ({ model, id, data }: { model: string; id?: strin
 export const removeDoc = async ({ model, id }: { model: string; id: string }) => {
   try {
     await deleteDoc(doc(db, model, id))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const updateDoc = async ({
+  model,
+  data: { id, ...dataToUpdate },
+}: {
+  model: string
+  data: any
+}) => {
+  try {
+    await setDoc(doc(db, model, id), dataToUpdate)
   } catch (error) {
     console.log(error)
   }

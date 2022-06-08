@@ -31,7 +31,7 @@ const SignIn = () => {
     try {
       const response = await signInWithEmailAndPassword(auth, values.email, values.password)
       const user = await me(response.user.uid)
-      setUser(user)
+      setUser({ ...user, id: response.user.uid })
     } catch (error) {
       console.log(error)
     }

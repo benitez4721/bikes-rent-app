@@ -1,14 +1,16 @@
 import { Button } from '@chakra-ui/button'
 import { Heading } from '@chakra-ui/layout'
-import React from 'react'
+import React, { useState } from 'react'
 import { BsFillPlusCircleFill } from 'react-icons/bs'
 import UsersTable from './UsersTable/UsersTable'
-import Modal from './Modal/Modal'
 import { useDisclosure } from '@chakra-ui/hooks'
 import TableHeader from '../../layout/SideBar/TableHeader'
+import UserModalForm from './UserModalForm/UserModalForm'
+import { User } from '../../interfaces/UserInterface'
 
 const Users: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [selectedUserToEdit, setSelectedUserToEdit] = useState<User | null>(null)
   return (
     <>
       <TableHeader>
@@ -24,8 +26,13 @@ const Users: React.FC = () => {
           Create User
         </Button>
       </TableHeader>
-      <UsersTable />
-      <Modal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+      <UsersTable onOpen={onOpen} setSelectedUserToEdit={setSelectedUserToEdit} />
+      <UserModalForm
+        isOpen={isOpen}
+        onClose={onClose}
+        selectedUserToEdit={selectedUserToEdit}
+        setSelectedUserToEdit={setSelectedUserToEdit}
+      />
     </>
   )
 }
