@@ -1,6 +1,9 @@
 export interface Reserve {
   id: string
-  user: string
+  userId: string
+  userFirstName: string
+  userLastName: string
+  userEmail: string
   from: string
   to: string
   bike: string

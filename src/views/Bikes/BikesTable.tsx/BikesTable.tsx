@@ -1,6 +1,7 @@
 import { Button } from '@chakra-ui/button'
 import { Checkbox } from '@chakra-ui/checkbox'
 import { Divider, HStack } from '@chakra-ui/layout'
+import { where } from '@firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import { BsPencilFill, BsTrash } from 'react-icons/bs'
 import Table from '../../../components/Table/Table'
@@ -22,7 +23,7 @@ const BikesTable: React.FC<BikesTableProps> = ({
 }) => {
   const [bikes, setBikes] = useState<Bike[]>([])
   const [loadingData, setLoadingData] = useState(true)
-  const { user } = useAuth()
+  const { isAdmin } = useAuth()
 
   const changeBikeAvaliability = async (bike: Bike) => {
     await updateDoc({ model: 'bikes', data: bike })
@@ -32,18 +33,22 @@ const BikesTable: React.FC<BikesTableProps> = ({
     { label: 'Color', render: ({ color }: any) => color },
     { label: 'Location', render: ({ location }: any) => location },
     { label: 'Rating', render: ({ rating }: any) => rating },
-    {
-      label: 'Avaliable',
-      render: (bike: Bike) => (
-        <Checkbox
-          isChecked={bike.reserved}
-          onChangeCapture={({ target }: any) =>
-            changeBikeAvaliability({ ...bike, reserved: target.checked })
-          }
-        />
-      ),
-    },
-    user.rol === 'admin'
+    ...(isAdmin
+      ? [
+          {
+            label: 'Reserved',
+            render: (bike: Bike) => (
+              <Checkbox
+                isChecked={bike.reserved}
+                onChangeCapture={({ target }: any) =>
+                  changeBikeAvaliability({ ...bike, reserved: target.checked })
+                }
+              />
+            ),
+          },
+        ]
+      : []),
+    isAdmin
       ? {
           label: 'Actions',
           render: (bike: Bike) => (
@@ -91,6 +96,7 @@ const BikesTable: React.FC<BikesTableProps> = ({
         setBikes(data)
         setLoadingData(false)
       },
+      query: !isAdmin ? where('reserved', '==', false) : null,
     })
 
     return () => {

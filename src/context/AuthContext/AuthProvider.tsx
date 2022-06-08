@@ -9,7 +9,8 @@ export const AuthProvider = ({ children }: any) => {
 }
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext) as { user: User; setUser: () => void }
+  const isAdmin = context.user?.rol === 'admin'
 
-  return context as { user: User; setUser: () => void }
+  return { ...context, isAdmin }
 }

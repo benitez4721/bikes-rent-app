@@ -4,7 +4,7 @@ import { ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from '@chakra-u
 import Modal from '../../../components/Modal/Modal'
 import { Form, Formik } from 'formik'
 import 'react-datepicker/dist/react-datepicker.css'
-import { createDoc } from '../../../services/helpers'
+import { createDoc, updateDoc } from '../../../services/helpers'
 import { Bike } from '../../../interfaces/BikeInterface'
 import DatePicker from '../../../components/DatePicker/DatePicker'
 import { Reserve } from '../../../interfaces/ReserveInterface'
@@ -21,15 +21,25 @@ const BikesReserveModalForm: React.FC<ModalProps> = ({
   selectedBikeToReserve,
 }) => {
   const [loading, setLoadign] = useState(false)
-  const { user } = useAuth()
+  const {
+    user: { id, firstName, lastName, email },
+  } = useAuth()
 
   const createReservation = async (values: any) => {
     try {
       setLoadign(true)
       await createDoc<Reserve>({
         model: 'reservations',
-        data: { ...values, bike: selectedBikeToReserve?.id, user: user.id },
+        data: {
+          ...values,
+          bike: selectedBikeToReserve?.id,
+          userId: id,
+          userFirstName: firstName,
+          userLastName: lastName,
+          userEmail: email,
+        },
       })
+      await updateDoc({ model: 'bikes', data: { ...selectedBikeToReserve, reserved: true } })
       onClose()
     } catch (error) {
       console.log(error)

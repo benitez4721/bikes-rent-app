@@ -1,4 +1,14 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, onSnapshot, setDoc } from '@firebase/firestore'
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  onSnapshot,
+  query,
+  QueryConstraint,
+  setDoc,
+} from '@firebase/firestore'
 import { db } from '../libs/firebase/config'
 
 export const getOne = async ({ id, model }: { id: string; model: string }) => {
@@ -7,8 +17,18 @@ export const getOne = async ({ id, model }: { id: string; model: string }) => {
   return response
 }
 
-export const getAll = <T>({ model, setData }: { model: string; setData: (data: T[]) => void }) => {
-  const unsubscribe = onSnapshot(collection(db, model), (snapshot) => {
+export const getAll = <T>({
+  model,
+  setData,
+  query: queryConstraint = null,
+}: {
+  model: string
+  setData: (data: T[]) => void
+  query?: QueryConstraint | null
+}) => {
+  const collectionRef = collection(db, model)
+  const snapshotQuery = queryConstraint ? query(collectionRef, queryConstraint) : collectionRef
+  const unsubscribe = onSnapshot(snapshotQuery, (snapshot) => {
     setData(
       snapshot.docs.map((doc) => {
         const data = doc.data()

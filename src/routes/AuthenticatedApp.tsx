@@ -9,6 +9,8 @@ const AuthenticatedApp = () => {
     <SideBar>
       <Routes>
         <Route path='users' element={<Users />} />
+
+        <Route path='/users/reservations/:userId' element={<Reserves />} />
         <Route path='bikes' element={<Bikes />} />
         <Route path='reserves' element={<Reserves />} />
         <Route path='*' element={<Navigate to='users' replace />} />

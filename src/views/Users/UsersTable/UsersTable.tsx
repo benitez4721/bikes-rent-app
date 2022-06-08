@@ -2,6 +2,7 @@ import { Button } from '@chakra-ui/button'
 import { Divider, HStack } from '@chakra-ui/layout'
 import React, { useEffect, useState } from 'react'
 import { BsFillEyeFill, BsPencilFill, BsTrash } from 'react-icons/bs'
+import { useNavigate } from 'react-router'
 import Table from '../../../components/Table/Table'
 import { User } from '../../../interfaces/UserInterface'
 import { getAll, removeDoc } from '../../../services/helpers'
@@ -18,6 +19,7 @@ interface UserTableProps {
 
 const UsersTable: React.FC<UserTableProps> = ({ onOpen, setSelectedUserToEdit }) => {
   const [users, setUsers] = useState<User[]>([])
+  const navigate = useNavigate()
   const [loadingData, setLoadingData] = useState(true)
   const columns = [
     {
@@ -36,7 +38,12 @@ const UsersTable: React.FC<UserTableProps> = ({ onOpen, setSelectedUserToEdit })
       label: 'Actions',
       render: (user: User) => (
         <HStack>
-          <Button leftIcon={<BsFillEyeFill />}>See all reservations</Button>{' '}
+          <Button
+            leftIcon={<BsFillEyeFill />}
+            onClick={() => navigate(`/users/reservations/${user.id}`, { state: { user } })}
+          >
+            See all reservations
+          </Button>{' '}
           <Divider orientation='vertical' />{' '}
           <Button
             onClick={() => {

@@ -1,7 +1,17 @@
-import React from 'react'
+import { where } from '@firebase/firestore'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router'
 import Table from '../../../components/Table/Table'
+import { useAuth } from '../../../context/AuthContext/AuthProvider'
+import { Reserve } from '../../../interfaces/ReserveInterface'
+import { getAll } from '../../../services/helpers'
 
 const ReserversTable: React.FC = () => {
+  const [reservations, setReservations] = useState<Reserve[]>([])
+  const [loadingData, setLoadingData] = useState(true)
+  const { user: authenticatedUser, isAdmin } = useAuth()
+  const { userId } = useParams()
+
   const columns = [
     {
       label: 'Reservation ID',
@@ -9,46 +19,47 @@ const ReserversTable: React.FC = () => {
     },
     {
       label: 'User full name',
-      render: ({ fullName }: any) => fullName,
+      render: ({ userFirstName, userLastName }: Reserve) => `${userFirstName} ${userLastName}`,
     },
     {
-      label: 'email',
-      render: ({ email }: any) => email,
-    },
-    {
-      label: 'Bike ID',
-      render: ({ bikeId }: any) => bikeId,
+      label: 'Email',
+      render: ({ userEmail }: Reserve) => userEmail,
     },
 
     {
-      label: 'Start date',
-      render: ({ startDate }: any) => startDate,
+      label: 'From',
+      render: ({ from }: any) => from.toDate().toDateString(),
     },
     {
-      label: 'End date',
-      render: ({ endDate }: any) => endDate,
+      label: 'To',
+      render: ({ to }: any) => to.toDate().toDateString(),
     },
   ]
 
-  const rows = [
-    {
-      id: 1,
-      fullName: 'Marco Benitez',
-      email: 'benitez272@gamil.com',
-      startDate: '10/10/22',
-      endDate: '10/23/22',
-      bikeId: 2,
-    },
-    {
-      id: 1,
-      fullName: 'Marco Benitez',
-      email: 'benitez272@gamil.com',
-      startDate: '10/10/22',
-      endDate: '10/23/22',
-      bikeId: 2,
-    },
-  ]
-  return <Table columns={columns} rows={rows} />
+  useEffect(() => {
+    const getQuery = () => {
+      if (userId) {
+        return where('userId', '==', userId)
+      }
+      if (!isAdmin) {
+        return where('userId', '==', authenticatedUser.id)
+      }
+
+      return null
+    }
+    const unsubscribe = getAll<Reserve>({
+      model: 'reservations',
+      setData: (data) => {
+        setReservations(data)
+        setLoadingData(false)
+      },
+      query: getQuery(),
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  return <Table columns={columns} rows={reservations} loading={loadingData} />
 }
 
 export default ReserversTable
