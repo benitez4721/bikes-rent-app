@@ -77,7 +77,7 @@ const UserModalForm: React.FC<ModalProps> = ({
                 {({ field }: any) => <PasswordField {...field} mt={4} />}
               </Field>
             )}
-            <Input name='email' label='Email' validator={validateEmail} />
+            {!selectedUserToEdit && <Input name='email' label='Email' validator={validateEmail} />}
             <Select
               name='rol'
               label='Rol'

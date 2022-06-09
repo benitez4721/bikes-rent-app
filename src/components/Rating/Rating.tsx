@@ -10,6 +10,7 @@ interface RatingProps {
   stars: number
   setStars?: any
   disabled?: boolean
+  forceEnable?: boolean
 }
 
 const Star: React.FC<StarProps> = ({ starId, marked }) => (
@@ -18,9 +19,13 @@ const Star: React.FC<StarProps> = ({ starId, marked }) => (
   </span>
 )
 
-const Rating: React.FC<RatingProps> = ({ stars, setStars, disabled = false }) => {
+const Rating: React.FC<RatingProps> = ({
+  stars,
+  setStars,
+  disabled = false,
+  forceEnable = false,
+}) => {
   const [selection, setSelection] = React.useState(0)
-  const [rating, setRating] = React.useState(stars)
   const { isAdmin } = useAuth()
 
   const hoverOver = (event: any) => {
@@ -31,21 +36,32 @@ const Rating: React.FC<RatingProps> = ({ stars, setStars, disabled = false }) =>
     setSelection(starId)
   }
 
-  const ratingEvents = {
-    onMouseOver: hoverOver,
-    onMouseOut: () => hoverOver(null),
+  const getRatingEvents = () => {
+    const ratingEvents = {
+      onMouseOver: hoverOver,
+      onMouseOut: () => hoverOver(null),
 
-    onClick: (event: SyntheticEvent) => {
-      const rate = Number((event.target as HTMLInputElement).getAttribute('star-id')) || 0
-      setRating(rate)
-      setStars(rate)
-    },
+      onClick: (event: SyntheticEvent) => {
+        const rate = Number((event.target as HTMLInputElement).getAttribute('star-id')) || 0
+        if (rate > 0) {
+          setStars(rate)
+        }
+      },
+    }
+    if (forceEnable) {
+      return ratingEvents
+    }
+    if (disabled || isAdmin) {
+      return {}
+    }
+
+    return ratingEvents
   }
 
   return (
-    <div {...(disabled || isAdmin ? {} : ratingEvents)}>
+    <div {...getRatingEvents()}>
       {Array.from({ length: 5 }, (v, i) => (
-        <Star key={i + 1} starId={i + 1} marked={selection ? selection > i : rating > i} />
+        <Star key={i + 1} starId={i + 1} marked={selection ? selection > i : stars > i} />
       ))}
     </div>
   )

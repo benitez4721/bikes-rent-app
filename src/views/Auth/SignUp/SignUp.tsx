@@ -18,7 +18,7 @@ import { auth, db } from '../../../libs/firebase/config'
 import { Logo } from '../AuthLogo/AuthLogo'
 import { useNavigate } from 'react-router'
 import Input from '../../../components/Input/Input'
-import { required, validateEmail } from '../../../utils/validators'
+import { required, validateEmail, validatePassword } from '../../../utils/validators'
 import TextError from '../../../components/TextError'
 
 const SignUp = () => {
@@ -79,8 +79,8 @@ const SignUp = () => {
                 <Stack spacing='5'>
                   <Input name='firstName' label='First name' validator={required} />
                   <Input name='lastName' label='Last name' validator={required} />
-                  <Input name='email' label='email' validator={validateEmail} />
-                  <Field name='password' validate={required}>
+                  <Input name='email' label='Email' validator={validateEmail} />
+                  <Field name='password' validate={validatePassword}>
                     {({ field }: any) => <PasswordField {...field} />}
                   </Field>
                 </Stack>

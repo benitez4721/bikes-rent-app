@@ -9,7 +9,7 @@ import { useAuth } from '../../../context/AuthContext/AuthProvider'
 import { Bike } from '../../../interfaces/BikeInterface'
 import { getAll, removeDoc, updateDoc } from '../../../services/helpers'
 import Rating from '../../../components/Rating/Rating'
-import { Input, Box } from '@chakra-ui/react'
+import { Input, Box, Text } from '@chakra-ui/react'
 
 interface BikesTableProps {
   onOpen: () => void
@@ -27,6 +27,7 @@ const BikesTable: React.FC<BikesTableProps> = ({
   const [loadingData, setLoadingData] = useState(true)
   const [initialData, setInitialData] = useState<Bike[]>([])
   const { isAdmin } = useAuth()
+  const [rateFilter, setRateFilter] = useState(0)
 
   const changeBikeAvaliability = async (bike: Bike) => {
     await updateDoc({ model: 'bikes', data: bike })
@@ -110,7 +111,6 @@ const BikesTable: React.FC<BikesTableProps> = ({
       model: 'bikes',
       setData: (data) => {
         setInitialData(data)
-        console.log(data)
         setBikes(data)
         setLoadingData(false)
       },
@@ -121,11 +121,29 @@ const BikesTable: React.FC<BikesTableProps> = ({
       unsubscribe()
     }
   }, [])
+
+  const filterByRate = (rate: number) => {
+    setRateFilter(rate)
+    setBikes(() => initialData.filter(({ rating }) => rating == rate))
+  }
   return (
     <>
       <Box pl={4} pt={4}>
         <Input placeholder='Search' size='sm' w='40%' onChange={handlerSearch} minWidth='250px' />
       </Box>
+      <HStack pl={4} mt={4} gap={3}>
+        <Text fontWeight='bold'>Filter by rate: </Text>
+        <Rating stars={rateFilter} setStars={filterByRate} forceEnable />
+        <Button
+          size='sm'
+          onClick={() => {
+            setBikes(initialData)
+            setRateFilter(0)
+          }}
+        >
+          Clear
+        </Button>
+      </HStack>
       <Table columns={columns} rows={bikes} loading={loadingData} />
     </>
   )

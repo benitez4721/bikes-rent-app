@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext/AuthProvider'
 import { Bike } from '../../interfaces/BikeInterface'
 import TableHeader from '../../layout/SideBar/TableHeader'
 import BikesModalForm from './BikesModalForm/BikesModalForm'
-import BikesReserveModalForm from './BikesReserveModalForm/BieksReserveModalForm'
+import BikesReserveModalForm from './BikesReserveModalForm/BikesReserveModalForm'
 import BikesTable from './BikesTable.tsx/BikesTable'
 
 const Bikes: React.FC = () => {

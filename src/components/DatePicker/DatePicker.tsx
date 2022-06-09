@@ -20,6 +20,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ name, label }) => {
         id='published-date'
         onChange={(date) => setFieldValue(field.name, date)}
         showPopperArrow={true}
+        autoComplete='off'
       />
       {meta.error && meta.touched && <FormErrorMessage>{meta.error}</FormErrorMessage>}
     </FormControl>

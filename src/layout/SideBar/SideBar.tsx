@@ -19,8 +19,6 @@ import { BsFillPersonFill, BsBicycle, BsClipboardCheck } from 'react-icons/bs'
 import { BiLogOut } from 'react-icons/bi'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext/AuthProvider'
-import { auth } from '../../libs/firebase/config'
-import { signOut } from 'firebase/auth'
 
 interface LinkItemProps {
   name: string
@@ -40,6 +38,7 @@ const UserLinkItems: Array<LinkItemProps> = [
 
 export default function SideBar({ children }: { children: ReactNode }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
   return (
     <Box minH='100vh' bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />
@@ -56,7 +55,6 @@ export default function SideBar({ children }: { children: ReactNode }) {
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
-      {/* mobilenav */}
       <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p='8' background='white' minHeight='100vh'>
         {children}
@@ -70,7 +68,7 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const { isAdmin, user, setUser } = useAuth()
+  const { isAdmin, user, logOut } = useAuth()
   return (
     <Box
       bg={useColorModeValue('white', 'gray.900')}
@@ -80,6 +78,8 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       pos='fixed'
       h='full'
       {...rest}
+      display='flex'
+      flexDirection='column'
     >
       <Flex h='20' alignItems='center' mx='8' justifyContent='space-between'>
         <Text fontSize='1rem' fontFamily='monospace' fontWeight='bold'>
@@ -92,32 +92,16 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           {link.name}
         </NavItem>
       ))}
-      <Box w='100%' h='56px' position='relative' px={4}>
+      <Box w='100%' h='56px' px={4} mt='auto' mb={'2rem'}>
         <Button
           h='100%'
           w='100%'
-          _hover={{ background: '#0BC5EA', color: 'white' }}
+          _hover={{ background: 'gray.100 ' }}
           background='white'
           justifyContent='flex-start'
           fontWeight='normal'
-          leftIcon={
-            <Icon
-              mr='2'
-              fontSize='18'
-              _groupHover={{
-                color: 'white',
-              }}
-              as={BiLogOut}
-            />
-          }
-          onClick={async () => {
-            try {
-              await signOut(auth)
-              setUser()
-            } catch (error: any) {
-              console.log(error.message)
-            }
-          }}
+          leftIcon={<Icon mr='2' fontSize='18' as={BiLogOut} />}
+          onClick={logOut}
         >
           Log Out
         </Button>

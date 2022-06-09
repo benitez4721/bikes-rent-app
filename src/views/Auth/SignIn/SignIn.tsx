@@ -18,7 +18,7 @@ import Input from '../../../components/Input/Input'
 import { useAuth } from '../../../context/AuthContext/AuthProvider'
 import { auth } from '../../../libs/firebase/config'
 import { me } from '../../../services/auth/me'
-import { required, validateEmail } from '../../../utils/validators'
+import { required, validateEmail, validatePassword } from '../../../utils/validators'
 import { Logo } from '../AuthLogo/AuthLogo'
 import { useState } from 'react'
 import TextError from '../../../components/TextError'
@@ -38,7 +38,6 @@ const SignIn = () => {
       localStorage.setItem('user', JSON.stringify({ ...user, id: response.user.uid }))
     } catch (error: any) {
       setFormError('* Credentials are wrong')
-      console.log(error.message)
     } finally {
       setLoading(false)
     }
@@ -81,11 +80,6 @@ const SignIn = () => {
                   </Field>
                 </Stack>
                 {formError && <TextError>{formError}</TextError>}
-                <HStack justify='space-between'>
-                  <Button variant='link' colorScheme='blue' size='sm'>
-                    Forgot password?
-                  </Button>
-                </HStack>
                 <Stack spacing='6'>
                   <Button colorScheme='linkedin' type='submit' isLoading={loading}>
                     Sign in

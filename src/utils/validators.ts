@@ -4,6 +4,16 @@ export const required = (value: string) => {
   }
 }
 
+export const validatePassword = (value: string) => {
+  let error
+  if (!value) {
+    return '* This field is required'
+  } else if (value.length < 6) {
+    error = '* Password must be at least 6 characters'
+  }
+  return error
+}
+
 export const validateEmail = (value: string) => {
   let error
   if (!value) {

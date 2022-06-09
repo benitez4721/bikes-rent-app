@@ -16,7 +16,7 @@ const Input: React.FC<InputProps> = ({ label, name, validator }) => {
       {({ field }: any) => (
         <FormControl mt={4} isInvalid={!!errors[name] && !!touched[name]}>
           <FormLabel htmlFor={name}>{label}</FormLabel>
-          <ChakraInput id={name} {...field} />
+          <ChakraInput id={name} {...field} autoComplete='off' />
           {errors[name] && touched[name] && (
             <FormErrorMessage>{errors[name] as string}</FormErrorMessage>
           )}
