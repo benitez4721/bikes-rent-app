@@ -3,6 +3,7 @@ import { useDisclosure } from '@chakra-ui/hooks'
 import { Heading } from '@chakra-ui/layout'
 import React, { useState } from 'react'
 import { BsFillPlusCircleFill } from 'react-icons/bs'
+import { useAuth } from '../../context/AuthContext/AuthProvider'
 import { Bike } from '../../interfaces/BikeInterface'
 import TableHeader from '../../layout/SideBar/TableHeader'
 import BikesModalForm from './BikesModalForm/BikesModalForm'
@@ -18,20 +19,22 @@ const Bikes: React.FC = () => {
   } = useDisclosure()
   const [selectedBikeToEdit, setSelectedBikeToEdit] = useState<Bike | null>(null)
   const [selectedBikeToReserve, setSelectedBikeToReserve] = useState<Bike | null>(null)
+  const { isAdmin } = useAuth()
   return (
     <>
       <TableHeader>
         <Heading>Bikes</Heading>
-        <Button
-          background='green'
-          color='white'
-          _hover={{ backgroundColor: 'green.700' }}
-          leftIcon={<BsFillPlusCircleFill />}
-          onClick={onOpen}
-        >
-          {' '}
-          Create Bike
-        </Button>
+        {isAdmin && (
+          <Button
+            background='green'
+            color='white'
+            _hover={{ backgroundColor: 'green.700' }}
+            leftIcon={<BsFillPlusCircleFill />}
+            onClick={onOpen}
+          >
+            Create Bike
+          </Button>
+        )}
       </TableHeader>
       <BikesTable
         setSelectedBikeToEdit={setSelectedBikeToEdit}

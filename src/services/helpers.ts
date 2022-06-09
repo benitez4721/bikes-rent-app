@@ -8,6 +8,7 @@ import {
   query,
   QueryConstraint,
   setDoc,
+  updateDoc as updateDocument,
 } from '@firebase/firestore'
 import { db } from '../libs/firebase/config'
 
@@ -77,7 +78,7 @@ export const updateDoc = async ({
   data: any
 }) => {
   try {
-    await setDoc(doc(db, model, id), dataToUpdate)
+    await updateDocument(doc(db, model, id), dataToUpdate)
   } catch (error) {
     console.log(error)
   }

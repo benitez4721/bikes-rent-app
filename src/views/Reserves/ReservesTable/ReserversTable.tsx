@@ -1,10 +1,12 @@
+import { Button } from '@chakra-ui/button'
 import { where } from '@firebase/firestore'
 import React, { useEffect, useState } from 'react'
+import { ImCancelCircle } from 'react-icons/im'
 import { useParams } from 'react-router'
 import Table from '../../../components/Table/Table'
 import { useAuth } from '../../../context/AuthContext/AuthProvider'
 import { Reserve } from '../../../interfaces/ReserveInterface'
-import { getAll } from '../../../services/helpers'
+import { getAll, removeDoc, updateDoc } from '../../../services/helpers'
 
 const ReserversTable: React.FC = () => {
   const [reservations, setReservations] = useState<Reserve[]>([])
@@ -12,6 +14,10 @@ const ReserversTable: React.FC = () => {
   const { user: authenticatedUser, isAdmin } = useAuth()
   const { userId } = useParams()
 
+  const cancelReservation = ({ id, bikeId }: { id: string; bikeId: string }) => {
+    updateDoc({ model: 'bikes', data: { id: bikeId, reserved: false } })
+    removeDoc({ model: 'reservations', id })
+  }
   const columns = [
     {
       label: 'Reservation ID',
@@ -33,6 +39,18 @@ const ReserversTable: React.FC = () => {
     {
       label: 'To',
       render: ({ to }: any) => to.toDate().toDateString(),
+    },
+    {
+      label: 'Actions',
+      render: ({ id, bike }: Reserve) => (
+        <Button
+          colorScheme='red'
+          leftIcon={<ImCancelCircle />}
+          onClick={() => cancelReservation({ id, bikeId: bike })}
+        >
+          Cancel
+        </Button>
+      ),
     },
   ]
 

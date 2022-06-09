@@ -16,16 +16,22 @@ import {
 import { DownloadIcon } from '@chakra-ui/icons'
 import { BsFillPersonFill, BsBicycle, BsClipboardCheck } from 'react-icons/bs'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext/AuthProvider'
 
 interface LinkItemProps {
   name: string
   icon: any
   route: string
 }
-const LinkItems: Array<LinkItemProps> = [
+const AdminLinkItems: Array<LinkItemProps> = [
   { name: 'Users', icon: BsFillPersonFill, route: 'users' },
   { name: 'Bikes', icon: BsBicycle, route: 'bikes' },
   { name: 'Reserves', icon: BsClipboardCheck, route: 'reserves' },
+]
+
+const UserLinkItems: Array<LinkItemProps> = [
+  { name: 'Bikes', icon: BsBicycle, route: 'bikes' },
+  { name: 'My reservations', icon: BsClipboardCheck, route: 'reserves' },
 ]
 
 export default function SideBar({ children }: { children: ReactNode }) {
@@ -60,6 +66,7 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+  const { isAdmin } = useAuth()
   return (
     <Box
       bg={useColorModeValue('white', 'gray.900')}
@@ -76,7 +83,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link) => (
+      {(isAdmin ? AdminLinkItems : UserLinkItems).map((link) => (
         <NavItem key={link.name} icon={link.icon} route={link.route}>
           {link.name}
         </NavItem>
