@@ -1,4 +1,5 @@
 import React, { SyntheticEvent } from 'react'
+import { useAuth } from '../../context/AuthContext/AuthProvider'
 
 interface StarProps {
   starId: any
@@ -20,6 +21,7 @@ const Star: React.FC<StarProps> = ({ starId, marked }) => (
 const Rating: React.FC<RatingProps> = ({ stars, setStars, disabled = false }) => {
   const [selection, setSelection] = React.useState(0)
   const [rating, setRating] = React.useState(stars)
+  const { isAdmin } = useAuth()
 
   const hoverOver = (event: any) => {
     let starId = 0
@@ -41,7 +43,7 @@ const Rating: React.FC<RatingProps> = ({ stars, setStars, disabled = false }) =>
   }
 
   return (
-    <div {...(disabled ? {} : ratingEvents)}>
+    <div {...(disabled || isAdmin ? {} : ratingEvents)}>
       {Array.from({ length: 5 }, (v, i) => (
         <Star key={i + 1} starId={i + 1} marked={selection ? selection > i : rating > i} />
       ))}
