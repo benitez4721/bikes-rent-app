@@ -38,7 +38,6 @@ const BikesModalForm: React.FC<ModalProps> = ({
       setLoadign(false)
     }
   }
-  console.log(selectedBikeToEdit)
 
   return (
     <Modal
