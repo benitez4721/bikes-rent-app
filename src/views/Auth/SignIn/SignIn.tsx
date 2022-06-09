@@ -9,7 +9,6 @@ import {
   useBreakpointValue,
   useColorModeValue,
 } from '@chakra-ui/react'
-import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control'
 import { signInWithEmailAndPassword } from '@firebase/auth'
 import { Field, Form, Formik } from 'formik'
 import { useNavigate } from 'react-router'
@@ -18,7 +17,7 @@ import Input from '../../../components/Input/Input'
 import { useAuth } from '../../../context/AuthContext/AuthProvider'
 import { auth } from '../../../libs/firebase/config'
 import { me } from '../../../services/auth/me'
-import { required, validateEmail, validatePassword } from '../../../utils/validators'
+import { required, validateEmail } from '../../../utils/validators'
 import { Logo } from '../AuthLogo/AuthLogo'
 import { useState } from 'react'
 import TextError from '../../../components/TextError'

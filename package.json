@@ -70,6 +70,8 @@
   },
   "lint-staged": {
     "*.{ts,tsx,test}": [
+      "yarn lint",
+      "yarn format",
       "git add ."
     ],
     "*{json, css}": [

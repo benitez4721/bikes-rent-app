@@ -4,7 +4,7 @@ import { ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from '@chakra-u
 import Modal from '../../../components/Modal/Modal'
 import { Form, Formik } from 'formik'
 import 'react-datepicker/dist/react-datepicker.css'
-import { createDoc, updateDoc } from '../../../services/helpers'
+import { createDoc } from '../../../services/helpers'
 import { Bike } from '../../../interfaces/BikeInterface'
 import DatePicker from '../../../components/DatePicker/DatePicker'
 import { Reserve } from '../../../interfaces/ReserveInterface'
