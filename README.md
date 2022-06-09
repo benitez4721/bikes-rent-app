@@ -1,3 +1,7 @@
+# Admin User for testing
+Email: toptal@gmail.com
+password: 1234Test
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
