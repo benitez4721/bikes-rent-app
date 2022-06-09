@@ -1,6 +1,4 @@
 import {
-  FormControl,
-  FormLabel,
   IconButton,
   Input,
   InputGroup,
@@ -8,16 +6,20 @@ import {
   InputRightElement,
   useDisclosure,
 } from '@chakra-ui/react'
+import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control'
 import React from 'react'
 import { HiEye, HiEyeOff } from 'react-icons/hi'
+import { useFormikContext } from 'formik'
 
 interface PasswordFieldProps extends InputProps {
   label?: string
+  error?: string
 }
 
 const PasswordField: React.FC<PasswordFieldProps> = ({ label = 'Password', mt = 0, ...props }) => {
   const { isOpen, onToggle } = useDisclosure()
   const inputRef = React.useRef<HTMLInputElement>(null)
+  const { errors, touched } = useFormikContext<any>()
 
   const onClickReveal = () => {
     onToggle()
@@ -27,7 +29,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ label = 'Password', mt = 
   }
 
   return (
-    <FormControl mt={mt}>
+    <FormControl mt={mt} isInvalid={!!errors['password'] && !!touched['password']}>
       <FormLabel htmlFor='password'>{label}</FormLabel>
       <InputGroup>
         <InputRightElement>
@@ -44,10 +46,12 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ label = 'Password', mt = 
           name='password'
           type={isOpen ? 'text' : 'password'}
           autoComplete='current-password'
-          required
           {...props}
         />
       </InputGroup>
+      {errors['password'] && touched['password'] && (
+        <FormErrorMessage>{errors['password'] as string}</FormErrorMessage>
+      )}
     </FormControl>
   )
 }

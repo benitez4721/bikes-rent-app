@@ -2,11 +2,8 @@ import {
   Box,
   Button,
   Container,
-  FormControl,
-  FormLabel,
   Heading,
   HStack,
-  Input,
   Stack,
   Text,
   useBreakpointValue,
@@ -19,16 +16,20 @@ import { useState } from 'react'
 import PasswordField from '../../../components/PasswordField/PasswordField'
 import { auth, db } from '../../../libs/firebase/config'
 import { Logo } from '../AuthLogo/AuthLogo'
-import { FormErrorMessage } from '@chakra-ui/form-control'
 import { useNavigate } from 'react-router'
+import Input from '../../../components/Input/Input'
+import { required, validateEmail } from '../../../utils/validators'
+import TextError from '../../../components/TextError'
 
 const SignUp = () => {
   const [emailError, setEmailError] = useState('')
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
 
   const execSignUp = async (values: any) => {
     setEmailError('')
     try {
+      setLoading(true)
       const response = await createUserWithEmailAndPassword(auth, values.email, values.password)
       await setDoc(doc(db, 'users', response.user.uid), { ...values, rol: 'user' })
       navigate('login')
@@ -38,6 +39,8 @@ const SignUp = () => {
       if (error.message.includes('email')) {
         setEmailError('* Email already in use')
       }
+    } finally {
+      setLoading(false)
     }
   }
   return (
@@ -73,38 +76,19 @@ const SignUp = () => {
               password: '',
             }}
           >
-            <Form>
+            <Form onChange={() => setEmailError('')}>
               <Stack spacing='6'>
                 <Stack spacing='5'>
-                  <Field name='firstName'>
-                    {({ field }: any) => (
-                      <FormControl>
-                        <FormLabel htmlFor='firstName'>First name</FormLabel>
-                        <Input id='firstName' {...field} />
-                      </FormControl>
-                    )}
+                  <Input name='firstName' label='First name' validator={required} />
+                  <Input name='lastName' label='Last name' validator={required} />
+                  <Input name='email' label='email' validator={validateEmail} />
+                  <Field name='password' validate={required}>
+                    {({ field }: any) => <PasswordField {...field} />}
                   </Field>
-                  <Field name='lastName'>
-                    {({ field }: any) => (
-                      <FormControl>
-                        <FormLabel htmlFor='email'>Last name</FormLabel>
-                        <Input id='lastName' {...field} />
-                      </FormControl>
-                    )}
-                  </Field>
-                  <Field name='email'>
-                    {({ field }: any) => (
-                      <FormControl isInvalid={!!emailError}>
-                        <FormLabel htmlFor='email'>Email</FormLabel>
-                        <Input id='email' type='email' {...field} />
-                        <FormErrorMessage>{emailError}</FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
-                  <Field name='password'>{({ field }: any) => <PasswordField {...field} />}</Field>
                 </Stack>
+                {emailError && <TextError>{emailError}</TextError>}
                 <Stack spacing='6'>
-                  <Button variant='primary' type='submit'>
+                  <Button colorScheme='linkedin' type='submit' mt={'1rem'} isLoading={loading}>
                     Sign up
                   </Button>
                 </Stack>

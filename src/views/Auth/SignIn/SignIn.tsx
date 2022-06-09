@@ -1,39 +1,45 @@
 import {
   Box,
   Button,
-  Checkbox,
   Container,
-  Divider,
-  FormControl,
-  FormLabel,
   Heading,
   HStack,
-  Input,
   Stack,
   Text,
   useBreakpointValue,
   useColorModeValue,
 } from '@chakra-ui/react'
+import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control'
 import { signInWithEmailAndPassword } from '@firebase/auth'
 import { Field, Form, Formik } from 'formik'
-import * as React from 'react'
 import { useNavigate } from 'react-router'
 import PasswordField from '../../../components/PasswordField/PasswordField'
+import Input from '../../../components/Input/Input'
 import { useAuth } from '../../../context/AuthContext/AuthProvider'
 import { auth } from '../../../libs/firebase/config'
 import { me } from '../../../services/auth/me'
+import { required, validateEmail } from '../../../utils/validators'
 import { Logo } from '../AuthLogo/AuthLogo'
+import { useState } from 'react'
+import TextError from '../../../components/TextError'
 
 const SignIn = () => {
   const navigate = useNavigate()
   const { setUser } = useAuth() as any
+  const [formError, setFormError] = useState('')
+  const [loading, setLoading] = useState(false)
+
   const execLogin = async (values: any) => {
     try {
+      setLoading(true)
       const response = await signInWithEmailAndPassword(auth, values.email, values.password)
       const user = await me(response.user.uid)
       setUser({ ...user, id: response.user.uid })
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      setFormError('* Credentials are wrong')
+      console.log(error.message)
+    } finally {
+      setLoading(false)
     }
   }
   return (
@@ -61,37 +67,28 @@ const SignIn = () => {
           borderRadius={{ base: 'none', sm: 'xl' }}
         >
           <Formik onSubmit={execLogin} initialValues={{ email: '', password: '' }}>
-            <Form>
+            <Form
+              onChange={() => {
+                setFormError('')
+              }}
+            >
               <Stack spacing='6'>
                 <Stack spacing='5'>
-                  <Field name='email'>
-                    {({ field }: any) => (
-                      <FormControl>
-                        <FormLabel htmlFor='email'>Email</FormLabel>
-                        <Input id='email' type='email' {...field} />
-                      </FormControl>
-                    )}
+                  <Input name='email' label='Email' validator={validateEmail} />
+                  <Field name='password' validate={required}>
+                    {({ field }: any) => <PasswordField {...field} />}
                   </Field>
-                  <Field name='password'>{({ field }: any) => <PasswordField {...field} />}</Field>
                 </Stack>
+                {formError && <TextError>{formError}</TextError>}
                 <HStack justify='space-between'>
-                  <Checkbox defaultChecked>Remember me</Checkbox>
                   <Button variant='link' colorScheme='blue' size='sm'>
                     Forgot password?
                   </Button>
                 </HStack>
                 <Stack spacing='6'>
-                  <Button variant='primary' type='submit'>
+                  <Button colorScheme='linkedin' type='submit' isLoading={loading}>
                     Sign in
                   </Button>
-                  <HStack>
-                    <Divider />
-                    <Text fontSize='sm' whiteSpace='nowrap' color='muted'>
-                      or continue with
-                    </Text>
-                    <Divider />
-                  </HStack>
-                  {/* <OAuthButtonGroup /> */}
                 </Stack>
               </Stack>
             </Form>
