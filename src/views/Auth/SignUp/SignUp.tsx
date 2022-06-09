@@ -34,8 +34,6 @@ const SignUp = () => {
       await setDoc(doc(db, 'users', response.user.uid), { ...values, rol: 'user' })
       navigate('login')
     } catch (error: any) {
-      console.log(error.message.includes('email'))
-
       if (error.message.includes('email')) {
         setEmailError('* Email already in use')
       }

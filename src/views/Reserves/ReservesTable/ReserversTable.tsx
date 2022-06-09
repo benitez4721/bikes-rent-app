@@ -36,9 +36,7 @@ const ReserversTable: React.FC = () => {
     reserveRating: number
     reservationId: string
   }) => {
-    console.log(totalAmountOfRates)
     const newTotalAmountOfRates = totalAmountOfRates + (!reserveRating ? 1 : 0)
-    console.log(reserveRating)
     const newTotalRateSum = totalRateSum + newRate - reserveRating
     const calcBikeRate = Math.ceil(newTotalRateSum / newTotalAmountOfRates)
 
@@ -143,7 +141,6 @@ const ReserversTable: React.FC = () => {
     const unsubscribe = getAll<Reserve>({
       model: 'reservations',
       setData: (data) => {
-        console.log(data)
         setReservations(data)
         setLoadingData(false)
       },

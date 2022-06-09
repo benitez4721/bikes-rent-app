@@ -6,6 +6,7 @@ import { Form, Formik } from 'formik'
 import Input from '../../../components/Input/Input'
 import { createDoc, updateDoc } from '../../../services/helpers'
 import { Bike } from '../../../interfaces/BikeInterface'
+import { required } from '../../../utils/validators'
 
 interface ModalProps {
   isOpen: boolean
@@ -64,9 +65,9 @@ const BikesModalForm: React.FC<ModalProps> = ({
           <ModalHeader>New bike</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <Input name='model' label='Model' />
-            <Input name='color' label='Color' />
-            <Input name='location' label='Location' />
+            <Input name='model' label='Model' validator={required} />
+            <Input name='color' label='Color' validator={required} />
+            <Input name='location' label='Location' validator={required} />
           </ModalBody>
 
           <ModalFooter>

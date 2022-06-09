@@ -29,6 +29,16 @@ const BikesReserveModalForm: React.FC<ModalProps> = ({
     try {
       setLoadign(true)
       const { id: bikeId, ...bikeAttr } = selectedBikeToReserve as Bike
+      console.log({
+        ...values,
+        ...bikeAttr,
+        bike: bikeId,
+        userId: id,
+        userFirstName: firstName,
+        userLastName: lastName,
+        userEmail: email,
+        reserveRating: 0,
+      })
       await createDoc<Reserve>({
         model: 'reservations',
         data: {

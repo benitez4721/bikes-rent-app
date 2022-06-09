@@ -29,21 +29,14 @@ const BikesTable: React.FC<BikesTableProps> = ({
   const changeBikeAvaliability = async (bike: Bike) => {
     await updateDoc({ model: 'bikes', data: bike })
   }
-  const changeBikeRating = async (rating: Bike) => {
-    await updateDoc({ model: 'bikes', data: rating })
-  }
+
   const columns = [
     { label: 'Model', render: ({ model }: any) => model },
     { label: 'Color', render: ({ color }: any) => color },
     { label: 'Location', render: ({ location }: any) => location },
     {
       label: 'Rating',
-      render: (bike: Bike) => (
-        <Rating
-          stars={bike.rating}
-          setStars={(stars: any) => changeBikeRating({ ...bike, rating: stars })}
-        />
-      ),
+      render: (bike: Bike) => <Rating stars={bike.rating} disabled />,
     },
     ...(isAdmin
       ? [

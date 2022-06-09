@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { SyntheticEvent } from 'react'
 
 interface StarProps {
   starId: any
@@ -7,7 +7,8 @@ interface StarProps {
 
 interface RatingProps {
   stars: number
-  setStars: any
+  setStars?: any
+  disabled?: boolean
 }
 
 const Star: React.FC<StarProps> = ({ starId, marked }) => (
@@ -16,7 +17,7 @@ const Star: React.FC<StarProps> = ({ starId, marked }) => (
   </span>
 )
 
-const Rating: React.FC<RatingProps> = ({ stars, setStars }) => {
+const Rating: React.FC<RatingProps> = ({ stars, setStars, disabled = false }) => {
   const [selection, setSelection] = React.useState(0)
   const [rating, setRating] = React.useState(stars)
 
@@ -28,16 +29,20 @@ const Rating: React.FC<RatingProps> = ({ stars, setStars }) => {
     setSelection(starId)
   }
 
+  const ratingEvents = {
+    onMouseOver: hoverOver,
+    onMouseOut: () => hoverOver(null),
+
+    onClick: (event: SyntheticEvent) => {
+      const rate = Number((event.target as HTMLInputElement).getAttribute('star-id')) || 0
+      setRating(rate)
+      console.log('hola')
+      setStars(rate)
+    },
+  }
+
   return (
-    <div
-      onMouseOver={hoverOver}
-      onMouseOut={() => hoverOver(null)}
-      onClick={(event) => {
-        const rate = Number((event.target as HTMLInputElement).getAttribute('star-id')) || 0
-        setRating(rate)
-        setStars(rate)
-      }}
-    >
+    <div {...(disabled ? {} : ratingEvents)}>
       {Array.from({ length: 5 }, (v, i) => (
         <Star key={i + 1} starId={i + 1} marked={selection ? selection > i : rating > i} />
       ))}

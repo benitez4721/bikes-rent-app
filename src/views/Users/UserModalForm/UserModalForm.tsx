@@ -11,6 +11,8 @@ import Input from '../../../components/Input/Input'
 import Select from '../../../components/Select/Select'
 import { User } from '../../../interfaces/UserInterface'
 import { updateDoc } from '../../../services/helpers'
+import { required, validateEmail } from '../../../utils/validators'
+import TextError from '../../../components/TextError'
 
 interface ModalProps {
   isOpen: boolean
@@ -24,6 +26,7 @@ const UserModalForm: React.FC<ModalProps> = ({
   selectedUserToEdit,
   setSelectedUserToEdit,
 }) => {
+  const [emailError, setEmailError] = useState('')
   const [loading, setLoadign] = useState(false)
   const execCreateOrUpdateUser = async (values: any) => {
     try {
@@ -37,6 +40,7 @@ const UserModalForm: React.FC<ModalProps> = ({
       onClose()
     } catch (error) {
       console.log(error)
+      setEmailError('* Email already in use')
     } finally {
       setLoadign(false)
     }
@@ -62,18 +66,18 @@ const UserModalForm: React.FC<ModalProps> = ({
           }
         }
       >
-        <Form>
+        <Form onChange={() => setEmailError('')}>
           <ModalHeader>Create your account</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <Input name='firstName' label='First name' />
-            <Input name='lastName' label='Last name' />
+            <Input name='firstName' label='First name' validator={required} />
+            <Input name='lastName' label='Last name' validator={required} />
             {!selectedUserToEdit && (
-              <Field name='password'>
+              <Field name='password' validate={required}>
                 {({ field }: any) => <PasswordField {...field} mt={4} />}
               </Field>
             )}
-            <Input name='email' label='Email' />
+            <Input name='email' label='Email' validator={validateEmail} />
             <Select
               name='rol'
               label='Rol'
@@ -82,6 +86,8 @@ const UserModalForm: React.FC<ModalProps> = ({
                 { value: 'admin', label: 'Admin' },
               ]}
             />
+
+            {emailError && <TextError mt={'1rem'}>{emailError}</TextError>}
           </ModalBody>
 
           <ModalFooter>
