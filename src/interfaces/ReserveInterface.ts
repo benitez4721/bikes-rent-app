@@ -7,4 +7,7 @@ export interface Reserve {
   from: string
   to: string
   bike: string
+  model: string
+  location: string
+  color: string
 }

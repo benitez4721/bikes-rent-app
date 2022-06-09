@@ -13,23 +13,26 @@ const ReserversTable: React.FC = () => {
   const [loadingData, setLoadingData] = useState(true)
   const { user: authenticatedUser, isAdmin } = useAuth()
   const { userId } = useParams()
-
   const cancelReservation = ({ id, bikeId }: { id: string; bikeId: string }) => {
     updateDoc({ model: 'bikes', data: { id: bikeId, reserved: false } })
     removeDoc({ model: 'reservations', id })
   }
   const columns = [
     {
-      label: 'Reservation ID',
-      render: ({ id }: any) => id,
-    },
-    {
-      label: 'User full name',
+      label: 'User',
       render: ({ userFirstName, userLastName }: Reserve) => `${userFirstName} ${userLastName}`,
     },
     {
-      label: 'Email',
-      render: ({ userEmail }: Reserve) => userEmail,
+      label: 'Model',
+      render: ({ model }: Reserve) => model,
+    },
+    {
+      label: 'Color',
+      render: ({ color }: Reserve) => color,
+    },
+    {
+      label: 'Location',
+      render: ({ location }: Reserve) => location,
     },
 
     {
@@ -40,18 +43,22 @@ const ReserversTable: React.FC = () => {
       label: 'To',
       render: ({ to }: any) => to.toDate().toDateString(),
     },
-    {
-      label: 'Actions',
-      render: ({ id, bike }: Reserve) => (
-        <Button
-          colorScheme='red'
-          leftIcon={<ImCancelCircle />}
-          onClick={() => cancelReservation({ id, bikeId: bike })}
-        >
-          Cancel
-        </Button>
-      ),
-    },
+    ...(!isAdmin
+      ? [
+          {
+            label: 'Actions',
+            render: ({ id, bike }: Reserve) => (
+              <Button
+                colorScheme='red'
+                leftIcon={<ImCancelCircle />}
+                onClick={() => cancelReservation({ id, bikeId: bike })}
+              >
+                Cancel
+              </Button>
+            ),
+          },
+        ]
+      : []),
   ]
 
   useEffect(() => {
@@ -60,6 +67,7 @@ const ReserversTable: React.FC = () => {
         return where('userId', '==', userId)
       }
       if (!isAdmin) {
+        console.log(authenticatedUser.id)
         return where('userId', '==', authenticatedUser.id)
       }
 
@@ -68,6 +76,7 @@ const ReserversTable: React.FC = () => {
     const unsubscribe = getAll<Reserve>({
       model: 'reservations',
       setData: (data) => {
+        console.log(data)
         setReservations(data)
         setLoadingData(false)
       },
@@ -77,7 +86,11 @@ const ReserversTable: React.FC = () => {
     return () => unsubscribe()
   }, [])
 
-  return <Table columns={columns} rows={reservations} loading={loadingData} />
+  return (
+    <>
+      <Table columns={columns} rows={reservations} loading={loadingData} />
+    </>
+  )
 }
 
 export default ReserversTable

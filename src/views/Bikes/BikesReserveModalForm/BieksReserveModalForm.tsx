@@ -28,11 +28,13 @@ const BikesReserveModalForm: React.FC<ModalProps> = ({
   const createReservation = async (values: any) => {
     try {
       setLoadign(true)
+      const { id: bikeId, ...bikeAttr } = selectedBikeToReserve as Bike
       await createDoc<Reserve>({
         model: 'reservations',
         data: {
           ...values,
-          bike: selectedBikeToReserve?.id,
+          ...bikeAttr,
+          bike: bikeId,
           userId: id,
           userFirstName: firstName,
           userLastName: lastName,
