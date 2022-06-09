@@ -12,11 +12,15 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
+  Button,
 } from '@chakra-ui/react'
 import { DownloadIcon } from '@chakra-ui/icons'
 import { BsFillPersonFill, BsBicycle, BsClipboardCheck } from 'react-icons/bs'
+import { BiLogOut } from 'react-icons/bi'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext/AuthProvider'
+import { auth } from '../../libs/firebase/config'
+import { signOut } from 'firebase/auth'
 
 interface LinkItemProps {
   name: string
@@ -66,7 +70,7 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const { isAdmin, user } = useAuth()
+  const { isAdmin, user, setUser } = useAuth()
   return (
     <Box
       bg={useColorModeValue('white', 'gray.900')}
@@ -88,6 +92,36 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           {link.name}
         </NavItem>
       ))}
+      <Box w='100%' h='56px' position='relative' px={4}>
+        <Button
+          h='100%'
+          w='100%'
+          _hover={{ background: '#0BC5EA', color: 'white' }}
+          background='white'
+          justifyContent='flex-start'
+          fontWeight='normal'
+          leftIcon={
+            <Icon
+              mr='2'
+              fontSize='18'
+              _groupHover={{
+                color: 'white',
+              }}
+              as={BiLogOut}
+            />
+          }
+          onClick={async () => {
+            try {
+              await signOut(auth)
+              setUser()
+            } catch (error: any) {
+              console.log(error.message)
+            }
+          }}
+        >
+          Log Out
+        </Button>
+      </Box>
     </Box>
   )
 }
