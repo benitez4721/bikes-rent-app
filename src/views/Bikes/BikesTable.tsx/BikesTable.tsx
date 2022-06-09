@@ -52,7 +52,7 @@ const BikesTable: React.FC<BikesTableProps> = ({
     ...(isAdmin
       ? [
           {
-            label: 'Reserved',
+            label: 'Not available',
             render: (bike: Bike) => (
               <Checkbox
                 isChecked={bike.reserved}
@@ -110,6 +110,7 @@ const BikesTable: React.FC<BikesTableProps> = ({
       model: 'bikes',
       setData: (data) => {
         setInitialData(data)
+        console.log(data)
         setBikes(data)
         setLoadingData(false)
       },

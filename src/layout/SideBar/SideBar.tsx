@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { DownloadIcon } from '@chakra-ui/icons'
 import { BsFillPersonFill, BsBicycle, BsClipboardCheck } from 'react-icons/bs'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext/AuthProvider'
 
 interface LinkItemProps {
@@ -66,7 +66,7 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const { isAdmin } = useAuth()
+  const { isAdmin, user } = useAuth()
   return (
     <Box
       bg={useColorModeValue('white', 'gray.900')}
@@ -78,8 +78,8 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       {...rest}
     >
       <Flex h='20' alignItems='center' mx='8' justifyContent='space-between'>
-        <Text fontSize='2xl' fontFamily='monospace' fontWeight='bold'>
-          Logo
+        <Text fontSize='1rem' fontFamily='monospace' fontWeight='bold'>
+          {`${user.firstName} ${user.lastName}`}
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
@@ -99,6 +99,8 @@ interface NavItemProps extends FlexProps {
 }
 
 const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
+  const { pathname } = useLocation()
+  const itemStyle = pathname.includes(route) ? { bg: 'cyan.400', color: 'white' } : {}
   return (
     <NavLink style={{ textDecoration: 'none' }} to={route}>
       <Flex
@@ -108,22 +110,10 @@ const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
         borderRadius='lg'
         role='group'
         cursor='pointer'
-        _hover={{
-          bg: 'cyan.400',
-          color: 'white',
-        }}
+        {...itemStyle}
         {...rest}
       >
-        {icon && (
-          <Icon
-            mr='4'
-            fontSize='16'
-            _groupHover={{
-              color: 'white',
-            }}
-            as={icon}
-          />
-        )}
+        {icon && <Icon mr='4' fontSize='16' as={icon} />}
         {children}
       </Flex>
     </NavLink>
