@@ -21,7 +21,7 @@ const BikesModalForm: React.FC<ModalProps> = ({
 }) => {
   const [loading, setLoadign] = useState(false)
 
-  const exexCreateOrUpdateBike = async (values: any) => {
+  const exexCreateOrUpdateBike = async (values: Bike) => {
     try {
       setLoadign(true)
       if (selectedBikeToEdit) {
@@ -48,13 +48,16 @@ const BikesModalForm: React.FC<ModalProps> = ({
       <Formik
         onSubmit={exexCreateOrUpdateBike}
         initialValues={
-          selectedBikeToEdit || {
+          selectedBikeToEdit ||
+          ({
             model: '',
             location: '',
             color: '',
             rating: 0,
             reserved: false,
-          }
+            totalAmountOfRates: 0,
+            totalRateSum: 0,
+          } as Bike)
         }
       >
         <Form>

@@ -5,4 +5,6 @@ export interface Bike {
   location: string
   rating: number
   reserved: boolean
+  totalRateSum: number
+  totalAmountOfRates: number
 }

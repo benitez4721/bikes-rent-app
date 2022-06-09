@@ -10,4 +10,8 @@ export interface Reserve {
   model: string
   location: string
   color: string
+  reserveRating: number
+  totalRateSum: number
+  totalAmountOfRates: number
+  bikeRating: number
 }

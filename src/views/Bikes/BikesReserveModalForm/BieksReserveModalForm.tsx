@@ -39,9 +39,9 @@ const BikesReserveModalForm: React.FC<ModalProps> = ({
           userFirstName: firstName,
           userLastName: lastName,
           userEmail: email,
+          reserveRating: 0,
         },
       })
-      await updateDoc({ model: 'bikes', data: { ...selectedBikeToReserve, reserved: true } })
       onClose()
     } catch (error) {
       console.log(error)

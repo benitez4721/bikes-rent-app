@@ -3,8 +3,10 @@ import { where } from '@firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import { ImCancelCircle } from 'react-icons/im'
 import { useParams } from 'react-router'
+import Rating from '../../../components/Rating/Rating'
 import Table from '../../../components/Table/Table'
 import { useAuth } from '../../../context/AuthContext/AuthProvider'
+import { Bike } from '../../../interfaces/BikeInterface'
 import { Reserve } from '../../../interfaces/ReserveInterface'
 import { getAll, removeDoc, updateDoc } from '../../../services/helpers'
 
@@ -13,10 +15,62 @@ const ReserversTable: React.FC = () => {
   const [loadingData, setLoadingData] = useState(true)
   const { user: authenticatedUser, isAdmin } = useAuth()
   const { userId } = useParams()
+
   const cancelReservation = ({ id, bikeId }: { id: string; bikeId: string }) => {
     updateDoc({ model: 'bikes', data: { id: bikeId, reserved: false } })
     removeDoc({ model: 'reservations', id })
   }
+
+  const onRateBike = ({
+    bikeId,
+    totalAmountOfRates,
+    totalRateSum,
+    newRate,
+    reserveRating,
+    reservationId,
+  }: {
+    bikeId: string
+    totalAmountOfRates: number
+    totalRateSum: number
+    newRate: number
+    reserveRating: number
+    reservationId: string
+  }) => {
+    console.log(totalAmountOfRates)
+    const newTotalAmountOfRates = totalAmountOfRates + (!reserveRating ? 1 : 0)
+    console.log(reserveRating)
+    const newTotalRateSum = totalRateSum + newRate - reserveRating
+    const calcBikeRate = Math.ceil(newTotalRateSum / newTotalAmountOfRates)
+
+    updateDoc({
+      model: 'reservations',
+      data: {
+        id: reservationId,
+        reserveRating: newRate,
+      } as Reserve,
+    })
+    reservations.forEach(({ id: reservationId }) => {
+      updateDoc({
+        model: 'reservations',
+        data: {
+          id: reservationId,
+          totalAmountOfRates: newTotalAmountOfRates,
+          totalRateSum: newTotalRateSum,
+        } as Reserve,
+      })
+    })
+
+    updateDoc({
+      model: 'bikes',
+      data: {
+        id: bikeId,
+        totalAmountOfRates: newTotalAmountOfRates,
+        totalRateSum: newTotalRateSum,
+        rating: calcBikeRate,
+      } as Bike,
+    })
+  }
+
   const columns = [
     {
       label: 'User',
@@ -30,10 +84,6 @@ const ReserversTable: React.FC = () => {
       label: 'Color',
       render: ({ color }: Reserve) => color,
     },
-    {
-      label: 'Location',
-      render: ({ location }: Reserve) => location,
-    },
 
     {
       label: 'From',
@@ -42,6 +92,24 @@ const ReserversTable: React.FC = () => {
     {
       label: 'To',
       render: ({ to }: any) => to.toDate().toDateString(),
+    },
+    {
+      label: 'Rate your bike',
+      render: ({ reserveRating, totalAmountOfRates, totalRateSum, bike, id }: Reserve) => (
+        <Rating
+          stars={reserveRating}
+          setStars={(stars: any) =>
+            onRateBike({
+              bikeId: bike,
+              totalRateSum,
+              totalAmountOfRates,
+              newRate: stars,
+              reserveRating,
+              reservationId: id,
+            })
+          }
+        />
+      ),
     },
     ...(!isAdmin
       ? [
@@ -67,7 +135,6 @@ const ReserversTable: React.FC = () => {
         return where('userId', '==', userId)
       }
       if (!isAdmin) {
-        console.log(authenticatedUser.id)
         return where('userId', '==', authenticatedUser.id)
       }
 
