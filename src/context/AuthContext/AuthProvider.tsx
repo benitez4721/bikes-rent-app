@@ -1,9 +1,16 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '../../interfaces/UserInterface'
 
 const AuthContext = createContext({})
 export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    const localUser = localStorage.getItem('user')
+    if (localUser) {
+      setUser(JSON.parse(localUser))
+    }
+  }, [])
 
   return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>
 }

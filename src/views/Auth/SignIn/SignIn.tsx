@@ -35,6 +35,7 @@ const SignIn = () => {
       const response = await signInWithEmailAndPassword(auth, values.email, values.password)
       const user = await me(response.user.uid)
       setUser({ ...user, id: response.user.uid })
+      localStorage.setItem('user', JSON.stringify({ ...user, id: response.user.uid }))
     } catch (error: any) {
       setFormError('* Credentials are wrong')
       console.log(error.message)
