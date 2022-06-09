@@ -9,6 +9,7 @@ import { useAuth } from '../../../context/AuthContext/AuthProvider'
 import { Bike } from '../../../interfaces/BikeInterface'
 import { getAll, removeDoc, updateDoc } from '../../../services/helpers'
 import Rating from '../../../components/Rating/Rating'
+import { Input, Box } from '@chakra-ui/react'
 
 interface BikesTableProps {
   onOpen: () => void
@@ -24,12 +25,22 @@ const BikesTable: React.FC<BikesTableProps> = ({
 }) => {
   const [bikes, setBikes] = useState<Bike[]>([])
   const [loadingData, setLoadingData] = useState(true)
+  const [initialData, setInitialData] = useState<Bike[]>([])
   const { isAdmin } = useAuth()
 
   const changeBikeAvaliability = async (bike: Bike) => {
     await updateDoc({ model: 'bikes', data: bike })
   }
-
+  const handlerSearch = async (txt: { target: { value: string } }) => {
+    const search = txt.target.value.toLocaleLowerCase()
+    const filters = initialData.filter(
+      (txt) =>
+        txt.color.toLocaleLowerCase().includes(search) ||
+        txt.location.toLocaleLowerCase().includes(search) ||
+        txt.model.toLocaleLowerCase().includes(search),
+    )
+    setBikes(filters)
+  }
   const columns = [
     { label: 'Model', render: ({ model }: any) => model },
     { label: 'Color', render: ({ color }: any) => color },
@@ -98,6 +109,7 @@ const BikesTable: React.FC<BikesTableProps> = ({
     const unsubscribe = getAll<Bike>({
       model: 'bikes',
       setData: (data) => {
+        setInitialData(data)
         setBikes(data)
         setLoadingData(false)
       },
@@ -108,7 +120,14 @@ const BikesTable: React.FC<BikesTableProps> = ({
       unsubscribe()
     }
   }, [])
-  return <Table columns={columns} rows={bikes} loading={loadingData} />
+  return (
+    <>
+      <Box pl={4} pt={4}>
+        <Input placeholder='Search' size='sm' w='40%' onChange={handlerSearch} minWidth='250px' />
+      </Box>
+      <Table columns={columns} rows={bikes} loading={loadingData} />
+    </>
+  )
 }
 
 export default BikesTable

@@ -36,7 +36,6 @@ const Rating: React.FC<RatingProps> = ({ stars, setStars, disabled = false }) =>
     onClick: (event: SyntheticEvent) => {
       const rate = Number((event.target as HTMLInputElement).getAttribute('star-id')) || 0
       setRating(rate)
-      console.log('hola')
       setStars(rate)
     },
   }
